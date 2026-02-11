@@ -14,6 +14,7 @@ Data model:
 endpoint=unique id , token which is used in string,creation time
 request= method, header, body, received at , endpoint_id
 
+ 
 
 Setup :-
 Server folder:  npm init -y
@@ -25,5 +26,9 @@ Server folder:  npm init -y
                  npm install prisma --save-dev
                  npm install @prisma/client  
                  npx prisma init      
+
+*make changes in tsconfig file and package.json files 
+*then use npx prisma db pull to  check if db connection is secured .
+*make migrations using npx prisma migrate dev --name init
 
  

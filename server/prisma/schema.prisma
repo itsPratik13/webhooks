@@ -13,3 +13,21 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Endpoint {
+  id        Int        @id @default(autoincrement())
+  token     String     @unique
+  createdAt DateTime   @default(now())
+  responses Response[] // many to one relationship
+}
+
+model Response {
+  id         Int      @id @default(autoincrement())
+  method     String
+  headers    String
+  body       String
+  receivedAt DateTime @default(now())
+
+  endpointId Int // id which shows which endpoint it belongs to
+  endpoint   Endpoint @relation(fields: [endpointId], references: [id])
+}
