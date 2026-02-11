@@ -1,0 +1,29 @@
+Problem Statement:“Inspect and debug webhooks in real time — without localhost headaches.”
+
+Approach:
+V1-   user must create an unique endpoint, response headers and body to be stored against the endpoint, 
+      data to be retrieved on frontend.
+*never reject the request. accept any header, any http method, any body and respond fast
+
+Scenarios:
+*10 webhooks in 1 sec= just ingest and respond fast
+*payload not json=just ingest and store as text
+*user refreshes dashboard=polling
+
+Data model:
+endpoint=unique id , token which is used in string,creation time
+request= method, header, body, received at , endpoint_id
+
+
+Setup :-
+Server folder:  npm init -y
+                 npm install -D typescript tsx @types/node
+                 npm install express
+                 npm install -D @types/express
+                 npm install -D nodemon       
+                 npx tsc --init          
+                 npm install prisma --save-dev
+                 npm install @prisma/client  
+                 npx prisma init      
+
+ 
