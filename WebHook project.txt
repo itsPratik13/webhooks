@@ -11,7 +11,7 @@ Scenarios:
 *user refreshes dashboard=polling
 
 Data model:
-endpoint=unique id , token which is used in string,creation time
+endpoint=unique id , token which is used as string,creation time
 request= method, header, body, received at , endpoint_id
 
  
@@ -30,5 +30,16 @@ Server folder:  npm init -y
 *make changes in tsconfig file and package.json files 
 *then use npx prisma db pull to  check if db connection is secured .
 *make migrations using npx prisma migrate dev --name init
+
+*now creating routes and controllers for endpoint and responses
+
+for Endpoints:
+* get request to fetch all the endpoints present in db--> easy
+
+* post request to create an endpoint. use crypt library inbuilt in node js to make token which are unique.
+give 5 tries max to create it , so there are no conflicts for token.  use baseurl64 and 24 random bytes to make it into string. baseurl64 so that it does contain - and _   .
+
+for WebHooks:
+*
 
  

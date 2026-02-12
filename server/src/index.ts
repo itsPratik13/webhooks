@@ -3,7 +3,9 @@ import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
+
 import endPointRoutes from "./routes/endpointRoutes.js"
+import webHookRoutes from "./routes/webhookRoutes.js"
 
 dotenv.config()
 const app = express();
@@ -12,6 +14,7 @@ app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));
 app.use("/endpoints",endPointRoutes);
+app.use("/webhook",webHookRoutes);
 
 app.get("/health", (req, res) => {
   res.send("Hello World!");
