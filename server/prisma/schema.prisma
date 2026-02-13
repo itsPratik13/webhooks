@@ -29,5 +29,5 @@ model Response {
   receivedAt DateTime @default(now())
 
   endpointId Int // id which shows which endpoint it belongs to
-  endpoint   Endpoint @relation(fields: [endpointId], references: [id])
+  endpoint   Endpoint @relation(fields: [endpointId], references: [id],onDelete: Cascade) // many to one relationship
 }
