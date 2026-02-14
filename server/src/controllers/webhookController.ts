@@ -6,9 +6,7 @@ const prisma = new PrismaClient();
 export const logWebHook = async (req: Request, res: Response) => {
   try {
     const { token } = req.params;
-    if (!token) {
-      return res.sendStatus(404);
-    }
+
     const endpoint = await prisma.endpoint.findUnique({
       where: {
         token: String(token),
