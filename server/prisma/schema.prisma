@@ -27,7 +27,8 @@ model Response {
   headers    String
   body       String
   receivedAt DateTime @default(now())
+  ipAddress  String?
 
   endpointId Int // id which shows which endpoint it belongs to
-  endpoint   Endpoint @relation(fields: [endpointId], references: [id],onDelete: Cascade) // many to one relationship
+  endpoint   Endpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade) // many to one relationship
 }

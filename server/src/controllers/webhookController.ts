@@ -24,6 +24,8 @@ export const logWebHook = async (req: Request, res: Response) => {
         method: req.method,
         headers: JSON.stringify(req.headers),
         body: rawBody,
+        ipAddress: req.ip || "unknown",
+
         endpointId: endpoint.id,
       },
     });
