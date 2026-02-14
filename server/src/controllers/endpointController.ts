@@ -3,34 +3,68 @@ import { Request, Response } from "express";
 import crypto from "crypto";
 const prisma = new PrismaClient();
 
-export const getEndpoints = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getEndpoints = async (req: Request, res: Response) => {
   try {
+    const {
+      search,
+      page = "1",
+      limit = "20",
+      sort = "createdAt",
+      order = "desc",
+    } = req.query;
+
+    const pageNumber = Math.max(Number(page), 1);
+    const limitNumber = Math.min(Number(limit), 100);
+
+    // Build an empty array first
+    const orConditions: any[] = [];
+
+    if (search) {
+      // Always check name
+      orConditions.push({ name: { contains: String(search), mode: "insensitive" } });
+
+      // Always check token
+      orConditions.push({ token: { contains: String(search), mode: "insensitive" } });
+
+      // Only check id if search is a valid number
+      const searchNumber = Number(search);
+      if (!isNaN(searchNumber)) {
+        orConditions.push({ id: searchNumber });
+      }
+    }
+
+    // If no search, leave 'where' undefined
+    const WhereCondition = orConditions.length > 0 ? { OR: orConditions } : undefined;
+
     const endpoints = await prisma.endpoint.findMany({
-      include: {
-        _count: {
-          select: {
-            responses: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
+      where: WhereCondition,
+      orderBy: { [String(sort)]: order === "asc" ? "asc" : "desc" },
+      include: { _count: { select: { responses: true } } },
+      take: limitNumber,
+      skip: (pageNumber - 1) * limitNumber,
+    });
+
+    const total = await prisma.endpoint.count({ where: WhereCondition });
+
+    res.status(200).json({
+      data: endpoints,
+      meta: {
+        total,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(total / limitNumber),
       },
     });
-    res.status(200).json(endpoints);
-    console.table(endpoints);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch the endpoints:", error });
   }
 };
 
-export const getEndpointById = async (
-  req: Request,
-  res: Response
-) => {
+
+
+
+
+export const getEndpointById = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
     if (isNaN(id)) {
@@ -52,9 +86,8 @@ export const getEndpointById = async (
     if (!endpoint) {
       return res.status(404).json({ message: "Endpoint not found" });
     }
-    
+
     res.status(200).json(endpoint);
-    
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch the endpoints:", error });
   }
@@ -63,8 +96,8 @@ export const getWebHooksById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const endpointId = Number(id);
-    const limit = (Number(req.query.limit) || 20,100);
-    const page = (Number(req.query.page) || 1,1);
+    const limit = (Number(req.query.limit) || 20, 100);
+    const page = (Number(req.query.page) || 1, 1);
     if (isNaN(endpointId)) {
       return res.status(400).json({ message: "Invalid endpoint ID" });
     }

@@ -16,6 +16,7 @@ datasource db {
 
 model Endpoint {
   id        Int        @id @default(autoincrement())
+  name      String?    @unique
   token     String     @unique
   createdAt DateTime   @default(now())
   responses Response[] // many to one relationship
