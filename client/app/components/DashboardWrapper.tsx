@@ -4,6 +4,7 @@ import Navbar from "./Navbar";
 import Sidebar from "./SideBar";
 import ThemeToggle from "./ThemeToggle";
 import StoreProvider, { useAppSelector } from "../redux";
+import EndpointsTable from "./EndpointsTable";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -12,6 +13,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       
       <main className="flex w-full  min-h-100 flex-col  bg-zinc-50 dark:bg-black font-sans ">
         <Navbar />
+        <div className="w-full  h-full flex-1 ">
+          <EndpointsTable/>
+        
+
+        </div>
         {children}
       </main>
     </div>

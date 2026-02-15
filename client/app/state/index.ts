@@ -2,12 +2,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface InitialStateTypes {
   isSideBarCollapsed: boolean;
-  isModalOpen:boolean;
+  isModalCollapsed:boolean;
 }
 
 const initialState: InitialStateTypes = {
   isSideBarCollapsed: false,
-  isModalOpen:false
+  isModalCollapsed:false
 };
 
 export const GlobalSlice = createSlice({
@@ -18,7 +18,7 @@ export const GlobalSlice = createSlice({
       state.isSideBarCollapsed = action.payload;
     },
     setIsModalCollpased:(state,action:PayloadAction<boolean>)=>{
-      state.isSideBarCollapsed=action.payload;
+      state.isModalCollapsed=action.payload;
     }
   },
 });

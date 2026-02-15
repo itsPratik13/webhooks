@@ -13,6 +13,10 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+const manRope=Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin"],
+})
 
 export const metadata: Metadata = {
   title: "WebHook Tester",
@@ -33,7 +37,7 @@ export default function RootLayout({
         disableTransitionOnChange
       >
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${manRope.variable} ${geistMono.variable} antialiased`}
         ><DashboardWrapper>
           {children}
           </DashboardWrapper>
