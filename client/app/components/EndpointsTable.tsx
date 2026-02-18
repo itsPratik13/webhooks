@@ -43,7 +43,7 @@ const EndpointsTable = () => {
         <h2 className="text-2xl text-center font-semibold mx-auto">
           Endpoints
         </h2>
-        <button className="mb-1 px-2 py-2 border border-neutral-300 rounded-2xl flex gap-2 cursor-pointer bg-neutral-100  hover:bg-neutral-200 transition-all duration-300 dark:bg-neutral-800 dark:hover:bg-neutral-700   dark:border-neutral-600 shadow-md hover:shadow-none">
+        <button className="mb-1 px-2 py-2 border border-neutral-300 rounded-2xl flex gap-2 cursor-pointer bg-neutral-100  hover:bg-neutral-200 transition-all duration-300 dark:bg-neutral-900 dark:hover:bg-neutral-800   dark:border-neutral-600 shadow-md hover:shadow-none">
           <PlusCircle className="size-4.5 mt-1 " />
           Add Endpoint
         </button>
@@ -54,7 +54,7 @@ const EndpointsTable = () => {
           <TableCaption>A list of your endpoints.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-1/5 text-left">Id</TableHead>
+              <TableHead className="w-1/5 text-left">ID</TableHead>
               <TableHead className="w-1/5 text-left">Name</TableHead>
               <TableHead className="w-1/5 text-left">Token</TableHead>
               <TableHead className="w-1/5 text-right">Created At</TableHead>

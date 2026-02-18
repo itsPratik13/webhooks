@@ -11,12 +11,12 @@ const TokenDisplay = ({ token }: { token: string }) => {
       <div className="flex gap-2">
         <CopyButton
           text={token}
-          classname="rounded-2xl   hover:bg-neutral-300 cursor-pointer border border-neutral-300"
+          classname="rounded-2xl   hover:bg-neutral-300 cursor-pointer border border-neutral-300 dark:border dark:border-neutral-700 dark:hover:bg-neutral-800"
         />
         <HideButton
           visible={visible}
           onToggle={() => setVisible(!visible)}
-          classname="rounded-2xl hover:bg-neutral-300 cursor-pointer border border-neutral-300"
+          classname="rounded-2xl hover:bg-neutral-300 cursor-pointer border border-neutral-300 dark:border dark:border-neutral-700 dark:hover:bg-neutral-800"
         />
       </div>
     </div>
