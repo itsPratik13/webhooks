@@ -19,6 +19,7 @@ import { useGetEndpointsQuery } from "../state/api";
 import CopyButton from "./CopyButton";
 import { useState } from "react";
 import HideButton from "./HideButton";
+import TokenDisplay from "./TokenDisplay";
 
 const EndpointsTable = () => {
   const { error, data, isLoading } = useGetEndpointsQuery();
@@ -69,16 +70,8 @@ const EndpointsTable = () => {
                 <TableCell className="w-1/5 p-2">{endpoint.name}</TableCell>
                 <TableCell className="w-1/5 p-2 ">
                   <TooltipProvider>
-                  <div className="flex justify-between items-center gap-4">
-                  <span className="tracking-tight">{visible?(endpoint.token):"*******"}</span>
-                  <div className="flex gap-2">
-                  <CopyButton text={endpoint.token} classname=" rounded-2xl hover:bg-green-500 cursor-pointer border border-neutral-300"/>
-                  <HideButton visible={visible} setVisible={setVisible} classname=" rounded-2xl hover:bg-green-500 cursor-pointer border border-neutral-300"/>
-                  </div>
-                  
-                  </div>
+                    <TokenDisplay token={endpoint.token}/>
                   </TooltipProvider>
-                 
                 </TableCell>
                 <TableCell className="w-1/5   text-right tracking-tight">
                   {new Date(endpoint.createdAt).toLocaleDateString()}

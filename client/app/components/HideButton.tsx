@@ -1,31 +1,15 @@
-"use client";
-
-import { useState } from "react";
-import { Copy, Check, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
 
 interface HideButtonProps {
   visible: boolean;
-  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  onToggle: () => void;
   classname?: string;
 }
-const HideButton = ({ visible, setVisible, classname }: HideButtonProps) => {
-  const toggleVisibility = () => {
-    setVisible((prev) => !prev);
-  };
+
+const HideButton = ({ visible, onToggle, classname }: HideButtonProps) => {
   return (
-    <Button
-      variant="ghost"
-      size="icon-sm"
-      className={classname}
-      onClick={toggleVisibility}
-    >
+    <Button variant="ghost" size="icon-sm" className={classname} onClick={onToggle}>
       {visible ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
     </Button>
   );
