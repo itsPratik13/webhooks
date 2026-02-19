@@ -16,9 +16,9 @@ import {
 } from "@/components/ui/tooltip";
 import { PlusCircle, PlusIcon } from "lucide-react";
 import { useDeleteEndpointsMutation, useGetEndpointsQuery } from "../state/api";
-import CopyButton from "./CopyButton";
+
 import { useState } from "react";
-import HideButton from "./HideButton";
+
 import TokenDisplay from "./TokenDisplay";
 import ConfirmModal from "./ConfirmModal";
 
@@ -146,6 +146,7 @@ dark:text-black"
           />
         )}
       </div>
+      
     </div>
   );
 };
