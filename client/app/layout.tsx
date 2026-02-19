@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono,Manrope } from "next/font/google";
+import { Geist, Geist_Mono, Manrope } from "next/font/google";
 import { ThemeProvider } from "./components/themeProvider";
 import "./globals.css";
 import DashboardWrapper from "./components/DashboardWrapper";
@@ -14,14 +14,15 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-const manRope=Manrope({
+const manRope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],
-})
+});
 
 export const metadata: Metadata = {
   title: "WebHook Tester",
-  description: "Test your webhooks and maintain a personalized dashboard to monitor all your webhook activities in one place.",
+  description:
+    "Test your webhooks and maintain a personalized dashboard to monitor all your webhook activities in one place.",
 };
 
 export default function RootLayout({
@@ -31,23 +32,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <body
-          className={`${manRope.variable} ${geistMono.variable} antialiased`}
-        ><DashboardWrapper>
-          {children}
-          <Toaster toastOptions={{
-            className:"bg-black text-white dark:bg-white dark:text-black font-sans text-sm px-4 py-2 rounded-md shadow-md",
-            duration:2000
-          }} position="top-right"/>
+      <body className={`${manRope.variable} ${geistMono.variable} antialiased`}>
+        {" "}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <DashboardWrapper>
+            {children}
+            <Toaster
+              toastOptions={{
+                className:
+                  "bg-black text-white dark:bg-white dark:text-black font-sans text-sm px-4 py-2 rounded-md shadow-md",
+                duration: 2000,
+              }}
+              position="top-right"
+            />
           </DashboardWrapper>
-        </body>
-      </ThemeProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

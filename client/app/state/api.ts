@@ -21,12 +21,23 @@ export const api = createApi({
   reducerPath: "api",
   tagTypes: ["Endpoints"],
   endpoints: (build) => ({
-    getEndpoints: build.query<Endpoint[],void>({
+    getEndpoints: build.query<Endpoint[], void>({
       query: () => "/endpoints",
-      transformResponse:(response:{data:Endpoint[]; meta:any})=>response.data,
+      transformResponse: (response: { data: Endpoint[]; meta: any }) =>
+        response.data,
       providesTags: ["Endpoints"],
+    }),
+    deleteEndpoints: build.mutation<void, number>({
+      query: (id) => {
+        return {
+          url: `/endpoints/${id}`,
+          method: "DELETE",
+        };
+      },
+
+      invalidatesTags: ["Endpoints"],
     }),
   }),
 });
 
-export const { useGetEndpointsQuery } = api;
+export const { useGetEndpointsQuery, useDeleteEndpointsMutation } = api;
