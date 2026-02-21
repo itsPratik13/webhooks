@@ -37,7 +37,14 @@ export const api = createApi({
 
       invalidatesTags: ["Endpoints"],
     }),
+    addEndpoints:build.mutation<Endpoint,string>({
+      query:(name)=>({
+        url:"/endpoints",
+        method:"POST",
+        body:{name},
+      }),invalidatesTags:["Endpoints"],
+    })
   }),
 });
 
-export const { useGetEndpointsQuery, useDeleteEndpointsMutation } = api;
+export const { useGetEndpointsQuery, useDeleteEndpointsMutation ,useAddEndpointsMutation} = api;

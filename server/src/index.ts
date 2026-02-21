@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 8000;
 app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));
-app.use("/endpoints",endPointRoutes);
+app.use("/endpoints",express.json(),endPointRoutes);
 app.use("/webhook",webHookRoutes);
 
 app.get("/health", (req, res) => {

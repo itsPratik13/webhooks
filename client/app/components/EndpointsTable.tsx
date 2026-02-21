@@ -21,6 +21,7 @@ import { useState } from "react";
 
 import TokenDisplay from "./TokenDisplay";
 import ConfirmModal from "./ConfirmModal";
+import AddModal from "./AddModal";
 
 const EndpointsTable = () => {
   const { error, data, isLoading } = useGetEndpointsQuery();
@@ -28,6 +29,9 @@ const EndpointsTable = () => {
 
   const [deletemodalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectId] = useState<number | null>(null);
+
+  const [openModal, setOpenModal] = useState(false);
+
   const handledeleteEndpoint = async (id: number) => {
     setSelectId(id);
     setDeleteModalOpen(true);
@@ -57,7 +61,21 @@ const EndpointsTable = () => {
     );
   }
   if (!data?.length) {
-    return <div className="p-6 text-center">No endpoints found.</div>;
+    return (
+      <div className="flex items-center justify-center  gap-5 mt-5">
+      <span>  No endpoints found.</span>
+        <button
+          className="mb-1 px-2 py-2 border border-neutral-300 rounded-2xl flex gap-2 cursor-pointer bg-neutral-100 hover:bg-neutral-200/50 transition-all duration-300dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:border-neutral-600 shadow-md dark:shadow-md dark:shadow-neutral-600  dark:hover:shadow-none hover:shadow-none"
+          onClick={() => setOpenModal(true)}
+        >
+          <PlusCircle className="size-4.5 mt-1 " />
+          Add Endpoint
+        </button>
+        {openModal && <AddModal open={openModal} onOpenChange={setOpenModal} />}
+
+      </div>
+      
+    );
   }
   return (
     <div className="w-full  justify-between h-full p-6">
@@ -72,11 +90,13 @@ const EndpointsTable = () => {
         dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:border-neutral-600
         shadow-md dark:shadow-md dark:shadow-neutral-600  dark:hover:shadow-none hover:shadow-none
         "
+          onClick={() => setOpenModal(true)}
         >
           <PlusCircle className="size-4.5 mt-1 " />
           Add Endpoint
         </button>
       </div>
+      {openModal && <AddModal open={openModal} onOpenChange={setOpenModal} />}
 
       <div className="max-w-full flex-1">
         <Table>
@@ -146,7 +166,6 @@ dark:text-black"
           />
         )}
       </div>
-      
     </div>
   );
 };
