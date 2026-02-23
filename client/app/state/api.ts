@@ -6,14 +6,14 @@ export interface Endpoint {
   token: string;
   createdAt: string;
 }
-interface EndpointsResponse {
-  data: Endpoint[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
+interface WebHookResponse {
+  id:number;
+  method:string;
+  headers:string;
+  body:string;
+  receivedAt:string;
+  ip?:string;
+  endpointId:number;
 }
 
 export const api = createApi({
@@ -37,14 +37,30 @@ export const api = createApi({
 
       invalidatesTags: ["Endpoints"],
     }),
-    addEndpoints:build.mutation<Endpoint,string>({
-      query:(name)=>({
-        url:"/endpoints",
-        method:"POST",
-        body:{name},
-      }),invalidatesTags:["Endpoints"],
+    addEndpoints: build.mutation<Endpoint, string>({
+      query: (name) => ({
+        url: "/endpoints",
+        method: "POST",
+        body: { name },
+      }),
+      invalidatesTags: ["Endpoints"],
+    }),
+    getWebHooks:build.query<WebHookResponse[],number>({
+      query:(endpointId)=>({
+        url:`/endpoints/${endpointId}/webhooks`,
+        transformResponse:(response:WebHookResponse[])=>response,
+        method:"GET",
+      
+      })
+      ,providesTags:["Endpoints"]
     })
   }),
+  
 });
 
-export const { useGetEndpointsQuery, useDeleteEndpointsMutation ,useAddEndpointsMutation} = api;
+export const {
+  useGetEndpointsQuery,
+  useDeleteEndpointsMutation,
+  useAddEndpointsMutation,
+  useGetWebHooksQuery
+} = api;

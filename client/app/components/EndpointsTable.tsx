@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import { PlusCircle, PlusIcon } from "lucide-react";
 import { useDeleteEndpointsMutation, useGetEndpointsQuery } from "../state/api";
+import Link from "next/link";
 
 import { useState } from "react";
 
@@ -130,7 +131,9 @@ const EndpointsTable = () => {
                     <div className="flex justify-end items-center gap-3">
                       <Tooltip>
                         <TooltipTrigger asChild>
+                          <Link href={`/endpoints/${endpoint.id}`}>
                           <button className="w-3 h-3 rounded-full bg-emerald-500 hover:bg-emerald-600 hover:scale-125 dark:bg-emerald-400 dark:hover:bg-emerald-300 transition-all duration-200 hover:shadow-md dark:hover:shadow-[0_0_8px_rgba(52,211,153,0.6)] cursor-pointer" />
+                          </Link>
                         </TooltipTrigger>
                         <TooltipContent className="bg-neutral-800 text-white dark:bg-neutral-200 dark:text-black">
                           View
@@ -144,8 +147,7 @@ const EndpointsTable = () => {
                           />
                         </TooltipTrigger>
                         <TooltipContent
-                          className="bg-neutral-800 text-white dark:bg-neutral-200 
-dark:text-black"
+                          className="bg-neutral-800 text-white dark:bg-neutral-200 dark:text-black"
                         >
                           Delete
                         </TooltipContent>

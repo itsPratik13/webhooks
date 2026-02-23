@@ -14,10 +14,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
       <main className="flex w-full  min-h-100 flex-col  bg-zinc-50 dark:bg-black font-sans  mt-2">
         <Navbar />
-        <div className="w-full  h-full flex-1 ">
-          <EndpointsTable />
-        
-        </div>
+       
+       
+       
+       
         {children}
       </main>
     </div>
