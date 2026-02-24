@@ -10,6 +10,7 @@ import webHookRoutes from "./routes/webhookRoutes.js"
 dotenv.config()
 const app = express();
 const PORT = process.env.PORT || 8000;
+app.set("trust proxy", true);
 app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));

@@ -43,3 +43,59 @@ for WebHooks:
 *
 
  
+
+
+
+
+
+
+
+ What’s Happening (408 from GitHub)
+
+- GitHub sends a ping request when you add a webhook and expects a fast 2xx response.
+- Your server was performing database work before responding and sometimes returned 404 for unknown tokens, which can trigger a 408 timeout on GitHub’s side.
+- The UI was also showing the wrong webhook URL (missing the /webhook path and pointing to the Next.js client port), so requests could be hitting the wrong service.
+Changes Made
+
+- Immediate 2xx ACK: The webhook endpoint now responds 200 immediately, then logs asynchronously. This prevents GitHub timeouts even if the DB is slow or unavailable. See webhookController.ts .
+- Correct URL in UI: The endpoint shown and copied in the dashboard now uses your API base and the proper path /webhook/:token. See TokenDisplay.tsx .
+- Trust proxy: Enables correct IP capture behind tunnels (localtunnel/ngrok). See index.ts .
+How To Use
+
+- Run the server on port 8000.
+- Set NEXT_PUBLIC_API_URL to your tunnel base pointing at the server, e.g. https://your-subdomain.localtunnel.me .
+- In the UI’s “Copy” action, the webhook URL will be: https://your-subdomain.localtunnel.me/webhook/ <token>. Use this in GitHub’s “Payload URL”.</token>
+- Content type can be application/json; secret is optional in V1 (no signature verification yet).
+- The endpoint accepts any method/body and responds fast, then logs the request to the DB if the token matches.
+Verification
+
+- Server runs and responds quickly to webhook POSTs:
+  - Dev server logs show 200 in ~10ms for POST /webhook/testtoken.
+  - TypeScript build for server succeeds.
+  - Client lint runs; it reports some pre-existing issues unrelated to the webhook changes.
+Recommended Improvements
+
+- Tunnel reliability: Localtunnel can be slow or unstable. For fewer 408s, prefer Cloudflare Tunnel or ngrok.
+- Pre-warm DB: Consider pre-connecting Prisma at startup via a shared client module to avoid the first-request overhead.
+- “Never reject” behavior: In V1 you said “never reject.” Currently unknown tokens are silently ignored after ACK. If you want to capture unmatched requests, add an “orphan” bucket or a table for unassigned responses.
+- UI environment variables:
+  - Ensure NEXT_PUBLIC_API_URL points to the server tunnel (not Next.js app).
+  - Optionally display the base URL source in the UI to prevent misconfiguration.
+- Client fixes (quality-of-life):
+  - Hooks must not be called conditionally; move early returns below hook calls in page.tsx .
+  - Avoid accessing refs during render in redux.tsx ; initialize in effects.
+  - Clean up unused imports and the ThemeToggle effect to reduce lint errors.
+Where Things Live
+
+- Server entry and middlewares: index.ts
+- Webhook route: webhookRoutes.ts
+- Webhook controller (logging): webhookController.ts
+- Endpoints API: endpointRoutes.ts , endpointController.ts
+- Client API base: api.ts
+- Displayed webhook URL: TokenDisplay.tsx
+Next Steps
+
+- Set NEXT_PUBLIC_API_URL to your tunnel base and copy the full “/webhook/ <token>” URL into GitHub’s webhook settings.</token>
+- If you still see 408s via localtunnel, switch to Cloudflare Tunnel or ngrok.
+- If you want signature verification for GitHub, we can add HMAC validation using the express.raw body you already wired.
+If you want, I can also consolidate Prisma into a single shared client and pre-connect at startup to reduce cold-start latency.

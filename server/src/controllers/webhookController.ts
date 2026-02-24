@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 const prisma = new PrismaClient();
 
 export const logWebHook = async (req: Request, res: Response) => {
+   res.sendStatus(200);
   try {
     const { token } = req.params;
 
@@ -13,7 +14,7 @@ export const logWebHook = async (req: Request, res: Response) => {
       },
     });
     if (!endpoint) {
-      return res.sendStatus(404);
+      return;
     }
     const rawBody =
       req.body instanceof Buffer
@@ -29,10 +30,8 @@ export const logWebHook = async (req: Request, res: Response) => {
         endpointId: endpoint.id,
       },
     });
-
-    return res.sendStatus(200);
   } catch (error) {
     console.error("Webhook logging failed:", error);
-    return res.sendStatus(200);
+    return;
   }
 };

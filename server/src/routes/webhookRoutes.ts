@@ -2,8 +2,8 @@ import { Router } from "express";
 import express from "express";
 import { logWebHook } from "../controllers/webhookController.js";
 
-const router= Router();
+const router = Router();
 
-router.post("/:token",express.raw({type:"*/*"}),logWebHook);
+router.all("/:token", express.raw({ type: "*/*", limit: "10mb" }), logWebHook);
 
 export default router;
