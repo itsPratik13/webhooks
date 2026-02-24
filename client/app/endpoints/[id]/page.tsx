@@ -37,6 +37,10 @@ export default function Page() {
   const [search, setSearch] = React.useState("");
   const [expandedRow, setExpandedRow] = React.useState<number | null>(null);
 
+  const methodColors: Record<string, string> = {
+    POST: "bg-green-200",
+  };
+
   const formatJSON = (value: unknown) => {
     try {
       if (typeof value === "string") {
@@ -56,16 +60,12 @@ export default function Page() {
 
   const sortedFilteredData = React.useMemo(() => {
     const filtered = data.filter((item: any) =>
-      Object.values(item)
-        .join(" ")
-        .toLowerCase()
-        .includes(search.toLowerCase())
+      Object.values(item).join(" ").toLowerCase().includes(search.toLowerCase())
     );
 
     return [...filtered].sort(
       (a: any, b: any) =>
-        new Date(b.receivedAt).getTime() -
-        new Date(a.receivedAt).getTime()
+        new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime()
     );
   }, [data, search]);
 
@@ -141,21 +141,22 @@ export default function Page() {
               {sortedFilteredData.map((response: any) => (
                 <React.Fragment key={response.id}>
                   <TableRow className="hover:bg-muted/50 transition-colors">
-                    <TableCell className="font-medium">
-                      {response.id}
-                    </TableCell>
+                    <TableCell className="font-medium">{response.id}</TableCell>
 
                     <TableCell>
-                      <span className="px-2 py-1 text-xs rounded-md bg-muted font-medium">
+                      <span
+                        className={`px-2 py-1 text-xs rounded-md font-medium ${
+                          methodColors[response.method] ||
+                          "bg-gray-100 text-gray-800"
+                        }`}
+                      >
                         {response.method}
                       </span>
                     </TableCell>
 
                     <TableCell>{response.ip}</TableCell>
 
-                    <TableCell>
-                      {formatDate(response.receivedAt)}
-                    </TableCell>
+                    <TableCell>{formatDate(response.receivedAt)}</TableCell>
 
                     <TableCell className="text-right">
                       <Button
@@ -164,15 +165,11 @@ export default function Page() {
                         variant="ghost"
                         onClick={() =>
                           setExpandedRow(
-                            expandedRow === response.id
-                              ? null
-                              : response.id
+                            expandedRow === response.id ? null : response.id
                           )
                         }
                       >
-                        {expandedRow === response.id
-                          ? "Hide"
-                          : "View"}
+                        {expandedRow === response.id ? "Hide" : "View"}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -183,18 +180,14 @@ export default function Page() {
                       <TableCell colSpan={5} className="bg-muted/30 p-4">
                         <div className="grid md:grid-cols-2 gap-6 text-sm">
                           <div>
-                            <h3 className="font-semibold mb-2">
-                              Headers
-                            </h3>
+                            <h3 className="font-semibold mb-2">Headers</h3>
                             <pre className="bg-background border rounded-md p-3 overflow-auto max-h-96 text-xs whitespace-pre-wrap break-all">
                               {formatJSON(response.headers)}
                             </pre>
                           </div>
 
                           <div>
-                            <h3 className="font-semibold mb-2">
-                              Body
-                            </h3>
+                            <h3 className="font-semibold mb-2">Body</h3>
                             <pre className="bg-background border rounded-md p-3 overflow-auto max-h-96 text-xs whitespace-pre-wrap break-all">
                               {formatJSON(response.body)}
                             </pre>
