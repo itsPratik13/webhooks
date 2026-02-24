@@ -4,6 +4,7 @@ export interface Endpoint {
   id: number;
   name: string | null;
   token: string;
+  provider: "stripe" | "github" | "razorpay";
   createdAt: string;
 }
 interface WebHookResponse {
@@ -14,6 +15,11 @@ interface WebHookResponse {
   receivedAt:string;
   ip?:string;
   endpointId:number;
+
+  eventType?: string;
+  statusCode?: number;
+  processingTime?: number; // in ms
+  signatureValid?: boolean;
 }
 
 export const api = createApi({
@@ -37,7 +43,7 @@ export const api = createApi({
 
       invalidatesTags: ["Endpoints"],
     }),
-    addEndpoints: build.mutation<Endpoint, string>({
+    addEndpoints: build.mutation<Endpoint, {name:string,provider:"stripe"|"github"|"razorpay"}>({
       query: (name) => ({
         url: "/endpoints",
         method: "POST",

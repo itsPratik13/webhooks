@@ -19,6 +19,7 @@ model Endpoint {
   name      String    @unique
   token     String     @unique
   createdAt DateTime   @default(now())
+  provider String?
   responses Response[] // many to one relationship
 }
 
@@ -27,6 +28,13 @@ model Response {
   method     String
   headers    String
   body       String
+ 
+  eventType  String?
+  statusCode Int?
+  processingTime Int?
+  signatureValid  Boolean?
+
+
   receivedAt DateTime @default(now())
   ipAddress  String?
 

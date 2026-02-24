@@ -25,10 +25,12 @@ const schema = z.object({
     .string()
     .min(1, "Endpoint name is required")
     .max(100, "Endpoint name must be less than 100 characters"),
+  provider: z.enum(["stripe", "github", "razorpay"]),
 });
 
 const AddModal = ({ open, onOpenChange }: AddModalProps) => {
   const [name, setName] = useState("");
+  const [provider, setProvider] = useState<"stripe"|"github"|"razorpay"|"">("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,9 +38,13 @@ const AddModal = ({ open, onOpenChange }: AddModalProps) => {
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    const validatedName = schema.safeParse({ name: name.trim() });
-    if (!validatedName.success) {
-      const errorMessage = validatedName.error.issues[0].message;
+    const validated = schema.safeParse({
+      name: name.trim(),
+      provider,
+    });
+
+    if (!validated.success) {
+      const errorMessage = validated.error.issues[0].message;
       setError(errorMessage);
       toast.error(errorMessage);
       return;
@@ -46,7 +52,10 @@ const AddModal = ({ open, onOpenChange }: AddModalProps) => {
     setError(null);
     setIsLoading(true);
     try {
-      await newEndpoint(validatedName.data.name).unwrap();
+      await newEndpoint({
+        name: validated.data.name,
+        provider: validated.data.provider,
+      }).unwrap();
       toast.success("Endpoint created successfully!");
       setName("");
       onOpenChange(false);
@@ -82,7 +91,20 @@ const AddModal = ({ open, onOpenChange }: AddModalProps) => {
               autoFocus
               className="w-full  mx-auto p-2 rounded-md focus:outline-none focus:ring-2 border border-neutral-200 bg-neutral-200/20 focus:ring-zinc-200 dark:focus:outline-none dark:focus:ring-2  dark:focus:ring-zinc-800 dark:bg-neutral-800/20 dark:border dark:border-neutral-600"
             />
-           
+            <Label htmlFor="name" className="gap-2 text-[15px]">
+              Provider Name *
+            </Label>
+            <select
+              value={provider}
+              onChange={(e) => setProvider(e.target.value as "stripe"|"github"|"razorpay"|"")}
+              disabled={isLoading}
+              className="w-full p-2 rounded-md border border-neutral-200 bg-neutral-200/20 dark:bg-neutral-800/20 dark:border-neutral-600"
+            >
+              <option value="">Select Provider</option>
+              <option value="github">GitHub</option>
+              <option value="stripe">Stripe</option>
+              <option value="razorpay">Razorpay</option>
+            </select>
           </div>
 
           <DialogFooter>

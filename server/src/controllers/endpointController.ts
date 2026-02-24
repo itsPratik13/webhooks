@@ -135,17 +135,18 @@ export const deleteEndpoint = async (req: Request, res: Response) => {
   }
 };
 export const generateToken = async (req: Request, res: Response) => {
-  const {name}=req.body;
+  const {name,provider}=req.body;
   if(!name || typeof name!=="string"){
     return res.status(400).json({ message: "Name is required" });
   }
+  
   const maxRetries = 5;
   for (let i = 0; i < maxRetries; i++) {
     try {
       const token = crypto.randomBytes(24).toString("base64url");
 
       const endpoint = await prisma.endpoint.create({
-        data: { token ,name},
+        data: { token ,name,provider},
       });
       console.log(endpoint);
       return res.status(201).json({ endpoint });
