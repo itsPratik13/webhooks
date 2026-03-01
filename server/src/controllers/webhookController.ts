@@ -2,6 +2,12 @@ import { PrismaClient } from "../generated/prisma/client.js";
 import { Request, Response } from "express";
 
 const prisma = new PrismaClient();
+const detectProvider = (req: Request): string | null => {
+  if (req.headers["stripe-signature"]) return "stripe";
+  if (req.headers["x-github-event"]) return "github";
+  if (req.headers["x-razorpay-signature"]) return "razorpay";
+  return null;
+};
 
 const getProviderMeta = (
   provider: string | null,
@@ -50,11 +56,14 @@ export const logWebHook = async (req: Request, res: Response) => {
         ? req.body.toString("utf-8")
         : JSON.stringify(req.body ?? {});
 
-    const { eventType, signatureValid } = getProviderMeta(
-      endpoint.provider,
-      req
-    );
-
+    const provider = endpoint.provider ?? detectProvider(req);
+    if (!endpoint.provider && provider) {
+      await prisma.endpoint.update({
+        where: { id: endpoint.id },
+        data: { provider },
+      });
+    }
+    const { eventType, signatureValid } = getProviderMeta(provider, req);
     await prisma.response.create({
       data: {
         method: req.method,

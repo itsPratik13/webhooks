@@ -179,7 +179,7 @@ export default function Page() {
                   {/* Expandable Row */}
                   {expandedRow === response.id && (
                     <TableRow>
-                      <TableCell colSpan={5} className="bg-muted/30 p-4">
+                      <TableCell colSpan={6} className="bg-muted/30 p-4">
                         <div className="grid md:grid-cols-2 gap-6 text-sm">
                           <div>
                             <h3 className="font-semibold mb-2">Headers</h3>
