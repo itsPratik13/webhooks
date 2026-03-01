@@ -103,7 +103,7 @@ export default function Page() {
             placeholder="Search responses..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-64 ring-none focus:ring-1 focus:ring-neutral-200"
+            className="w-64 ring-none focus:ring-1 focus:ring-neutral-200 focus:ring-offset-0 focus-visible:ring-1 focus-visible:ring-neutral-200 focus-visible:ring-offset-0"
           />
           <Button
             variant="outline"
