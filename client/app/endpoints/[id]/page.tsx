@@ -155,7 +155,7 @@ export default function Page() {
                       </span>
                     </TableCell>
 
-                    <TableCell>{response.ip}</TableCell>
+                    <TableCell>{response.ipAddress}</TableCell>
 
                     <TableCell>{formatDate(response.receivedAt)}</TableCell>
                     <TableCell>{response.eventType}</TableCell>
