@@ -38,10 +38,7 @@ export default function Page() {
   const [expandedRow, setExpandedRow] = React.useState<number | null>(null);
 
   const methodColors: Record<string, string> = {
-    POST: "bg-green-200 text-green-800",
-    GET: "bg-blue-200 text-blue-800",
-    PUT: "bg-yellow-200 text-yellow-800",
-    DELETE: "bg-red-200 text-red-800",
+    POST: "bg-green-200",
   };
 
   const formatJSON = (value: unknown) => {
@@ -63,10 +60,7 @@ export default function Page() {
 
   const sortedFilteredData = React.useMemo(() => {
     const filtered = data.filter((item: any) =>
-      Object.values(item)
-        .join(" ")
-        .toLowerCase()
-        .includes(search.toLowerCase())
+      Object.values(item).join(" ").toLowerCase().includes(search.toLowerCase())
     );
 
     return [...filtered].sort(
@@ -109,7 +103,7 @@ export default function Page() {
             placeholder="Search responses..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-64"
+            className="w-64 ring-none focus:ring-1 focus:ring-neutral-200"
           />
           <Button
             variant="outline"
@@ -137,12 +131,9 @@ export default function Page() {
               <TableRow>
                 <TableHead>ID</TableHead>
                 <TableHead>Method</TableHead>
-                <TableHead>Event Type</TableHead>
                 <TableHead>IP</TableHead>
                 <TableHead>Received</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Processing Time</TableHead>
-                <TableHead>Signature Valid</TableHead>
+                <TableHead>Event Type</TableHead>
                 <TableHead className="text-right">Details</TableHead>
               </TableRow>
             </TableHeader>
@@ -164,22 +155,15 @@ export default function Page() {
                       </span>
                     </TableCell>
 
-                    <TableCell>{response.eventType || "-"}</TableCell>
-                    <TableCell>{response.ip || "-"}</TableCell>
+                    <TableCell>{response.ip}</TableCell>
+
                     <TableCell>{formatDate(response.receivedAt)}</TableCell>
-                    <TableCell>{response.statusCode ?? "-"}</TableCell>
-                    <TableCell>{response.processingTime ?? "-"}</TableCell>
-                    <TableCell>
-                      {response.signatureValid == null
-                        ? "-"
-                        : response.signatureValid
-                        ? "✅"
-                        : "❌"}
-                    </TableCell>
+                    <TableCell>{response.eventType}</TableCell>
 
                     <TableCell className="text-right">
                       <Button
                         size="sm"
+                        className="cursor-pointer"
                         variant="ghost"
                         onClick={() =>
                           setExpandedRow(
@@ -192,10 +176,10 @@ export default function Page() {
                     </TableCell>
                   </TableRow>
 
-                  {/* Expandable Row for Headers/Body */}
+                  {/* Expandable Row */}
                   {expandedRow === response.id && (
                     <TableRow>
-                      <TableCell colSpan={9} className="bg-muted/30 p-4">
+                      <TableCell colSpan={5} className="bg-muted/30 p-4">
                         <div className="grid md:grid-cols-2 gap-6 text-sm">
                           <div>
                             <h3 className="font-semibold mb-2">Headers</h3>
