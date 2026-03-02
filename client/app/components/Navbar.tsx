@@ -5,6 +5,7 @@ import { Menu, SearchIcon, Settings } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "../redux";
 import { setIsSideBarCollapsed } from "../state";
+import { SignOutButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
@@ -49,6 +50,9 @@ const Navbar = () => {
           <Settings />
         </Link>
         <ThemeToggle />
+        <SignOutButton redirectUrl="/sign-in">
+          <button className="cursor-pointer  px-1 py-1 rounded-xl text-[14px] bg-neutral-100 border border-neutral-300 hover:bg-neutral-200/50 transition-all duration-300 shadow-md dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:border-neutral-600 dark:shadow-md dark:shadow-neutral-600 dark:hover:shadow-none hover:shadow-none ">SignOut</button>
+        </SignOutButton>
       </div>
     </div>
   );

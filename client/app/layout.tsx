@@ -4,6 +4,7 @@ import { ThemeProvider } from "./components/themeProvider";
 import "./globals.css";
 import DashboardWrapper from "./components/DashboardWrapper";
 import { Toaster } from "sonner";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en" suppressHydrationWarning>
       <body className={`${manRope.variable} ${geistMono.variable} antialiased`}>
         {" "}
@@ -54,5 +56,6 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
+    </ClerkProvider>
   );
 }
