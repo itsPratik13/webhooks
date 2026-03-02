@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -13,31 +7,37 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+model User{
+  id        Int      @id @default(autoincrement())
+  name String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  endpoints Endpoint[]
+}
 
 model Endpoint {
   id        Int        @id @default(autoincrement())
-  name      String    @unique
   token     String     @unique
   createdAt DateTime   @default(now())
-  provider String?
-  responses Response[] // many to one relationship
+  name      String     @unique
+  provider  String?
+  responses Response[]
+  userId Int?
+  user User? @relation(fields: [userId],references: [id],onDelete: Cascade)
 }
 
 model Response {
-  id         Int      @id @default(autoincrement())
-  method     String
-  headers    String
-  body       String
- 
-  eventType  String?
-  statusCode Int?
+  id             Int      @id @default(autoincrement())
+  method         String
+  headers        String
+  body           String
+  receivedAt     DateTime @default(now())
+  endpointId     Int
+  ipAddress      String?
+  eventType      String?
   processingTime Int?
-  signatureValid  Boolean?
-
-
-  receivedAt DateTime @default(now())
-  ipAddress  String?
-
-  endpointId Int // id which shows which endpoint it belongs to
-  endpoint   Endpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade) // many to one relationship
+  signatureValid Boolean?
+  statusCode     Int?
+  endpoint       Endpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
 }
