@@ -15,14 +15,16 @@ export const UserExists = async (
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const email = req.auth?.sessionClaims?.email as string | undefined;
+    const email = (req.auth?.sessionClaims?.email as string) || 
+    (req.auth?.sessionClaims?.primary_email as string) ||
+    `${clerkId}@unknown.com`;
 
     const user = await prisma.user.upsert({
       where: { clerkUserId: clerkId },
       update: {},
       create: {
         clerkUserId: clerkId,
-        email: email ?? "unknown",
+        email,
       },
     });
 

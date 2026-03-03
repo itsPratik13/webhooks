@@ -23,7 +23,23 @@ interface WebHookResponse {
 }
 
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL }),
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: process.env.NEXT_PUBLIC_API_URL ,
+    prepareHeaders: async (headers) => {
+      try {
+        if (typeof window !== "undefined") {
+          const token = await window.Clerk?.session?.getToken();
+          console.log("Clerk token:", token);
+          if (token) {
+            headers.set("Authorization", `Bearer ${token}`);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to get Clerk token:", e);
+      }
+      return headers;
+    },
+  }),
   reducerPath: "api",
   tagTypes: ["Endpoints"],
   endpoints: (build) => ({
