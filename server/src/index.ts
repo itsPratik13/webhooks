@@ -7,6 +7,7 @@ import { clerkMiddleware,requireAuth } from "@clerk/express";
 
 import endPointRoutes from "./routes/endpointRoutes.js"
 import webHookRoutes from "./routes/webhookRoutes.js"
+import { UserExists } from "./middleware/checkUserExists.js";
 
 dotenv.config()
 const app = express();
@@ -16,7 +17,8 @@ app.use(clerkMiddleware());
 app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));
-app.use("/endpoints",express.json(),endPointRoutes);
+
+app.use("/endpoints",express.json(),requireAuth(),UserExists,endPointRoutes);
 app.use("/webhook",webHookRoutes);
 
 app.get("/health", (req, res) => {

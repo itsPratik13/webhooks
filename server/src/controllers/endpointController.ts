@@ -1,10 +1,11 @@
 import { PrismaClient, Prisma } from "../generated/prisma/client.js";
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import crypto from "crypto";
 const prisma = new PrismaClient();
 
 export const getEndpoints = async (req: Request, res: Response) => {
   try {
+    const userId = req.dbUser!.id;
     const {
       search,
       page = "1",
@@ -21,10 +22,14 @@ export const getEndpoints = async (req: Request, res: Response) => {
 
     if (search) {
       // Always check name
-      orConditions.push({ name: { contains: String(search), mode: "insensitive" } });
+      orConditions.push({
+        name: { contains: String(search), mode: "insensitive" },
+      });
 
       // Always check token
-      orConditions.push({ token: { contains: String(search), mode: "insensitive" } });
+      orConditions.push({
+        token: { contains: String(search), mode: "insensitive" },
+      });
 
       // Only check id if search is a valid number
       const searchNumber = Number(search);
@@ -34,7 +39,10 @@ export const getEndpoints = async (req: Request, res: Response) => {
     }
 
     // If no search, leave 'where' undefined
-    const WhereCondition = orConditions.length > 0 ? { OR: orConditions } : undefined;
+    const WhereCondition = {
+      userId,
+      ...(orConditions.length > 0 ? { OR: orConditions } : {}),
+    };
 
     const endpoints = await prisma.endpoint.findMany({
       where: WhereCondition,
@@ -60,34 +68,31 @@ export const getEndpoints = async (req: Request, res: Response) => {
   }
 };
 
-
-
-
-
 export const getEndpointById = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
+    const endpointId = Number(req.params.id);
+    if (isNaN(endpointId)) {
       return res.status(400).json({ message: "Invalid endpoint ID" });
     }
-
     const endpoint = await prisma.endpoint.findUnique({
       where: {
-        id: id,
-      },
-      include: {
-        _count: {
-          select: {
-            responses: true,
-          },
-        },
+        id: endpointId,
       },
     });
-    if (!endpoint) {
+    if (!endpoint || endpoint.userId !== req.dbUser!.id) {
       return res.status(404).json({ message: "Endpoint not found" });
     }
-
-    res.status(200).json(endpoint);
+    const responsesCount = await prisma.response.count({
+      where: {
+        endpointId: endpoint.id,
+      },
+    });
+    res.status(200).json({
+      ...endpoint,
+      _count: {
+        responses: responsesCount,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch the endpoints:", error });
   }
@@ -98,9 +103,17 @@ export const getWebHooksById = async (req: Request, res: Response) => {
     const endpointId = Number(id);
     const limit = Math.min(Number(req.query.limit) || 20, 100);
     const page = Math.max(Number(req.query.page) || 1, 1);
-   
+
     if (isNaN(endpointId)) {
       return res.status(400).json({ message: "Invalid endpoint ID" });
+    }
+    const endpoint = await prisma.endpoint.findUnique({
+      where: {
+        id: endpointId,
+      },
+    });
+    if (!endpoint || endpoint.userId !== req.dbUser!.id) {
+      return res.status(404).json({ message: "Endpoint not found" });
     }
     const webhooks = await prisma.response.findMany({
       where: {
@@ -120,13 +133,20 @@ export const getWebHooksById = async (req: Request, res: Response) => {
 };
 export const deleteEndpoint = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
+    const endpointId = Number(req.params.id);
+    if (isNaN(endpointId)) {
       return res.status(400).json({ message: "Invalid endpoint ID" });
+    }
+    const endpoint = await prisma.endpoint.findUnique({
+      where: { id: endpointId },
+    });
+
+    if (!endpoint || endpoint.userId !== req.dbUser!.id) {
+      return res.status(404).json({ message: "Endpoint not found" });
     }
     await prisma.endpoint.delete({
       where: {
-        id: id,
+        id: endpointId,
       },
     });
     res.sendStatus(204);
@@ -135,18 +155,19 @@ export const deleteEndpoint = async (req: Request, res: Response) => {
   }
 };
 export const generateToken = async (req: Request, res: Response) => {
-  const {name,provider}=req.body;
-  if(!name || typeof name!=="string"){
+  const { name, provider } = req.body;
+  if (!name || typeof name !== "string") {
     return res.status(400).json({ message: "Name is required" });
   }
-  
+  const userId = req.dbUser!.id;
+
   const maxRetries = 5;
   for (let i = 0; i < maxRetries; i++) {
     try {
       const token = crypto.randomBytes(24).toString("base64url");
 
       const endpoint = await prisma.endpoint.create({
-        data: { token ,name,provider},
+        data: { token, name, provider, userId },
       });
       console.log(endpoint);
       return res.status(201).json({ endpoint });
