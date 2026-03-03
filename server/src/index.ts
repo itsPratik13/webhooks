@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
+import { clerkMiddleware,requireAuth } from "@clerk/express";
 
 import endPointRoutes from "./routes/endpointRoutes.js"
 import webHookRoutes from "./routes/webhookRoutes.js"
@@ -11,6 +12,7 @@ dotenv.config()
 const app = express();
 const PORT = process.env.PORT || 8000;
 app.set("trust proxy", true);
+app.use(clerkMiddleware());
 app.use(helmet());
 app.use(cors());
 app.use(morgan("dev"));

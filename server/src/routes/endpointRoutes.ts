@@ -6,8 +6,10 @@ import {
   getEndpointById,
   getWebHooksById,
 } from "../controllers/endpointController.js";
+import { requireAuth } from "@clerk/express";
 
 const router = Router();
+router.use(requireAuth());
 
 router.post("/", generateToken);
 

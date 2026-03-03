@@ -7,24 +7,28 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-model User{
-  id        Int      @id @default(autoincrement())
-  name String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  endpoints Endpoint[]
+
+model User {
+  id          Int        @id @default(autoincrement())
+  name        String?
+  email       String     @unique
+  clerkUserId String     @unique
+  createdAt   DateTime   @default(now())
+  endpoints   Endpoint[]
 }
 
 model Endpoint {
   id        Int        @id @default(autoincrement())
   token     String     @unique
   createdAt DateTime   @default(now())
-  name      String     @unique
+  name      String
   provider  String?
   responses Response[]
-  userId Int
-  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name]) //uniqueness is scoped for user
+  @@index([userId]) //index for faster lookups by userId
 }
 
 model Response {
@@ -40,4 +44,8 @@ model Response {
   signatureValid Boolean?
   statusCode     Int?
   endpoint       Endpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+
+  @@index([endpointId])
+  @@index([receivedAt])
+  @@index([eventType])
 }
