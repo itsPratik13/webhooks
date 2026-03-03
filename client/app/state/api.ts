@@ -8,13 +8,13 @@ export interface Endpoint {
   createdAt: string;
 }
 interface WebHookResponse {
-  id:number;
-  method:string;
-  headers:string;
-  body:string;
-  receivedAt:string;
-  ip?:string;
-  endpointId:number;
+  id: number;
+  method: string;
+  headers: string;
+  body: string;
+  receivedAt: string;
+  ip?: string;
+  endpointId: number;
 
   eventType?: string;
   statusCode?: number;
@@ -23,11 +23,12 @@ interface WebHookResponse {
 }
 
 export const api = createApi({
-  baseQuery: fetchBaseQuery({ 
-    baseUrl: process.env.NEXT_PUBLIC_API_URL ,
+  baseQuery: fetchBaseQuery({
+    baseUrl: process.env.NEXT_PUBLIC_API_URL,
     prepareHeaders: async (headers) => {
       try {
         if (typeof window !== "undefined") {
+          await window.Clerk?.load?.();
           const token = await window.Clerk?.session?.getToken();
           console.log("Clerk token:", token);
           if (token) {
@@ -59,7 +60,10 @@ export const api = createApi({
 
       invalidatesTags: ["Endpoints"],
     }),
-    addEndpoints: build.mutation<Endpoint, {name:string,provider:"stripe"|"github"|"razorpay"}>({
+    addEndpoints: build.mutation<
+      Endpoint,
+      { name: string; provider: "stripe" | "github" | "razorpay" }
+    >({
       query: (name) => ({
         url: "/endpoints",
         method: "POST",
@@ -67,22 +71,20 @@ export const api = createApi({
       }),
       invalidatesTags: ["Endpoints"],
     }),
-    getWebHooks:build.query<WebHookResponse[],number>({
-      query:(endpointId)=>({
-        url:`/endpoints/${endpointId}/webhooks`,
-        transformResponse:(response:WebHookResponse[])=>response,
-        method:"GET",
-      
-      })
-      ,providesTags:["Endpoints"]
-    })
+    getWebHooks: build.query<WebHookResponse[], number>({
+      query: (endpointId) => ({
+        url: `/endpoints/${endpointId}/webhooks`,
+        transformResponse: (response: WebHookResponse[]) => response,
+        method: "GET",
+      }),
+      providesTags: ["Endpoints"],
+    }),
   }),
-  
 });
 
 export const {
   useGetEndpointsQuery,
   useDeleteEndpointsMutation,
   useAddEndpointsMutation,
-  useGetWebHooksQuery
+  useGetWebHooksQuery,
 } = api;
