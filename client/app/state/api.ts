@@ -62,12 +62,11 @@ export const api = createApi({
     }),
     addEndpoints: build.mutation<
       Endpoint,
-      { name: string; provider: "stripe" | "github" | "razorpay" }
-    >({
-      query: (name) => ({
+      { name: string; provider: "stripe" | "github" | "razorpay" ,signingSecret?:string}>({
+      query: (body) => ({
         url: "/endpoints",
         method: "POST",
-        body: { name },
+        body,
       }),
       invalidatesTags: ["Endpoints"],
     }),

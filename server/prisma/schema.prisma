@@ -23,6 +23,7 @@ model Endpoint {
   createdAt DateTime   @default(now())
   name      String
   provider  String?
+  signingSecret String?
   responses Response[]
   userId    Int
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)

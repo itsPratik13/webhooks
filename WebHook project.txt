@@ -99,3 +99,8 @@ Next Steps
 - If you still see 408s via localtunnel, switch to Cloudflare Tunnel or ngrok.
 - If you want signature verification for GitHub, we can add HMAC validation using the express.raw body you already wired.
 If you want, I can also consolidate Prisma into a single shared client and pre-connect at startup to reduce cold-start latency.
+
+
+
+
+https://docs.stripe.com/webhooks#verify-webhook-signatures-with-official-libraries
