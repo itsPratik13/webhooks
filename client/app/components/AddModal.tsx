@@ -124,7 +124,7 @@ const AddModal = ({ open, onOpenChange }: AddModalProps) => {
               id="signingSecret"
               name="signingSecret"
               placeholder="Signing Secret"
-              value={name}
+              value={signinSecret}
               onChange={(e) => setSigningSecret(e.target.value)}
               disabled={isLoading}
               maxLength={100}

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Check, X } from "lucide-react";
 
 export default function Page() {
   const params = useParams();
@@ -68,6 +69,13 @@ export default function Page() {
         new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime()
     );
   }, [data, search]);
+
+  const IsSignatureValid=({valid}:{valid:boolean|null|undefined})=>{
+    if(valid===null||valid===undefined){
+      return <span className="text-xs text-muted-foreground">---</span>
+    }
+    return valid ?(<span><Check/></span>):(<span><X/></span>)
+  }
 
   if (!endpointId) {
     return (
@@ -134,6 +142,7 @@ export default function Page() {
                 <TableHead>IP</TableHead>
                 <TableHead>Received</TableHead>
                 <TableHead>Event Type</TableHead>
+                <TableHead>Signature</TableHead>
                 <TableHead className="text-right">Details</TableHead>
               </TableRow>
             </TableHeader>
@@ -158,7 +167,8 @@ export default function Page() {
                     <TableCell>{response.ipAddress}</TableCell>
 
                     <TableCell>{formatDate(response.receivedAt)}</TableCell>
-                    <TableCell>{response.eventType}</TableCell>
+                    <TableCell>{response.eventType??"-"}</TableCell>
+                    <TableCell><IsSignatureValid valid={response.signatureValid}/></TableCell>
 
                     <TableCell className="text-right">
                       <Button
@@ -179,7 +189,7 @@ export default function Page() {
                   {/* Expandable Row */}
                   {expandedRow === response.id && (
                     <TableRow>
-                      <TableCell colSpan={6} className="bg-muted/30 p-4">
+                      <TableCell colSpan={7} className="bg-muted/30 p-4">
                         <div className="grid md:grid-cols-2 gap-6 text-sm">
                           <div>
                             <h3 className="font-semibold mb-2">Headers</h3>
