@@ -5,6 +5,7 @@ import {
   getEndpoints,
   getEndpointById,
   getWebHooksById,
+  updateEndpoint,
 } from "../controllers/endpointController.js";
 import { requireAuth } from "@clerk/express";
 
@@ -18,6 +19,8 @@ router.get("/", getEndpoints);
 router.get("/:id/webhooks", getWebHooksById);
 
 router.get("/:id", getEndpointById);
+
+router.patch("/:id",updateEndpoint);
 
 router.delete("/:id", deleteEndpoint);
 

@@ -154,6 +154,36 @@ export const deleteEndpoint = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to delete endpoint" });
   }
 };
+export const updateEndpoint=async(req:Request,res:Response)=>{
+  try {
+    const endpointId=Number(req.params.id);
+    if(isNaN(endpointId)){
+     res.status(400).json({message:"Invalid endpoint ID"});
+    }
+    const endpoint =await prisma.endpoint.findUnique({
+      where:{
+        id:endpointId,
+      }
+    })
+    if(!endpoint || endpoint.userId!==req.dbUser?.id){
+      res.status(404).json({message:"Endpoint not found"});
+    }
+    const {signingSecret}=req.body;
+    const updateEndpoint=await prisma.endpoint.update({
+      where:{
+        id:endpointId,
+      },
+      data:{
+        signingSecret:signingSecret ?? null,
+      }
+      
+    })
+    res.status(200).json(updateEndpoint);
+  } catch (error) {
+    res.status(500).json({message:"Failed to update endpoint"});
+    
+  }
+}
 export const generateToken = async (req: Request, res: Response) => {
   const { name, provider,signingSecret } = req.body;
   if (!name || typeof name !== "string") {

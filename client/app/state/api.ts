@@ -6,6 +6,7 @@ export interface Endpoint {
   token: string;
   provider: "stripe" | "github" | "razorpay";
   createdAt: string;
+  signingSecret?:string|null
 }
 interface WebHookResponse {
   id: number;
@@ -78,6 +79,14 @@ export const api = createApi({
       }),
       providesTags: ["Endpoints"],
     }),
+    updateEndpoints:build.mutation<Endpoint,{id:number,signingSecret:string|null}>({
+      query:({id,...body})=>({
+        url:`/endpoints/${id}`,
+        method:"PATCH",
+        body
+      }),
+      invalidatesTags:["Endpoints"]
+    })
   }),
 });
 
@@ -86,4 +95,5 @@ export const {
   useDeleteEndpointsMutation,
   useAddEndpointsMutation,
   useGetWebHooksQuery,
+  useUpdateEndpointsMutation,
 } = api;
