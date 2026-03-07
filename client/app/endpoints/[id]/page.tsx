@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
+import JsonView from "@microlink/react-json-view";
 
 export default function Page() {
   const params = useParams();
@@ -70,12 +71,31 @@ export default function Page() {
     );
   }, [data, search]);
 
-  const IsSignatureValid=({valid}:{valid:boolean|null|undefined})=>{
-    if(valid===null||valid===undefined){
-      return <span className="text-xs text-muted-foreground">---</span>
+  const IsSignatureValid = ({
+    valid,
+  }: {
+    valid: boolean | null | undefined;
+  }) => {
+    if (valid === null || valid === undefined) {
+      return <span className="text-xs text-muted-foreground">---</span>;
     }
-    return valid ?(<span><Check/></span>):(<span><X/></span>)
-  }
+    return valid ? (
+      <span>
+        <Check />
+      </span>
+    ) : (
+      <span>
+        <X />
+      </span>
+    );
+  };
+  const parseJSON = (value: string) => {
+    try {
+      return typeof value === "string" ? JSON.parse(value) : value;
+    } catch {
+      return { raw: value };
+    }
+  };
 
   if (!endpointId) {
     return (
@@ -117,6 +137,7 @@ export default function Page() {
             variant="outline"
             onClick={() => refetch()}
             disabled={isFetching}
+            className="cursor-pointer"
           >
             {isFetching ? "Refreshing..." : "Refresh"}
           </Button>
@@ -167,8 +188,10 @@ export default function Page() {
                     <TableCell>{response.ipAddress}</TableCell>
 
                     <TableCell>{formatDate(response.receivedAt)}</TableCell>
-                    <TableCell>{response.eventType??"-"}</TableCell>
-                    <TableCell><IsSignatureValid valid={response.signatureValid}/></TableCell>
+                    <TableCell>{response.eventType ?? "-"}</TableCell>
+                    <TableCell>
+                      <IsSignatureValid valid={response.signatureValid} />
+                    </TableCell>
 
                     <TableCell className="text-right">
                       <Button
@@ -191,18 +214,39 @@ export default function Page() {
                     <TableRow>
                       <TableCell colSpan={7} className="bg-muted/30 p-4">
                         <div className="grid md:grid-cols-2 gap-6 text-sm">
-                          <div>
+                          <div
+                            style={{
+                              scrollbarWidth: "thin",
+                            }}
+                            className="overflow-y-auto max-h-96 border rounded-md p-3 scrollbar-thin"
+                          >
                             <h3 className="font-semibold mb-2">Headers</h3>
-                            <pre className="bg-background border rounded-md p-3 overflow-auto max-h-96 text-xs whitespace-pre-wrap break-all">
-                              {formatJSON(response.headers)}
-                            </pre>
+                            <JsonView
+                              src={parseJSON(response.headers)}
+                              collapsed={1}
+                              displayDataTypes={false}
+                            />
                           </div>
 
-                          <div>
+                          <div
+                            style={{ scrollbarWidth: "thin" }}
+                            className="overflow-y-auto max-h-96 border rounded-md p-3"
+                          >
                             <h3 className="font-semibold mb-2">Body</h3>
-                            <pre className="bg-background border rounded-md p-3 overflow-auto max-h-96 text-xs whitespace-pre-wrap break-all">
-                              {formatJSON(response.body)}
-                            </pre>
+
+                            <div
+                              style={{
+                                whiteSpace: "pre-wrap",
+                                wordBreak: "break-word",
+                              }}
+                            >
+                              <JsonView
+                                src={parseJSON(response.body)}
+                                collapsed={2}
+                                displayDataTypes={false}
+                                enableClipboard={false}
+                              />
+                            </div>
                           </div>
                         </div>
                       </TableCell>
