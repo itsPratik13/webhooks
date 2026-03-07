@@ -15,7 +15,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PlusCircle } from "lucide-react";
-import { Endpoint, useDeleteEndpointsMutation, useGetEndpointsQuery } from "../state/api";
+import {
+  Endpoint,
+  useDeleteEndpointsMutation,
+  useGetEndpointsQuery,
+} from "../state/api";
 import Link from "next/link";
 
 import { useState } from "react";
@@ -35,13 +39,15 @@ const EndpointsTable = () => {
 
   const [openModal, setOpenModal] = useState(false);
 
-  const[editModelopen,setEditModelOpen]=useState(false) ;
-   const[selectedEndpoint,setSelectedEndpoint]=useState<Endpoint|null>(null);
+  const [editModelopen, setEditModelOpen] = useState(false);
+  const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint | null>(
+    null
+  );
 
-  const handleeditEndpoint=async(endpoint:Endpoint)=>{
-   setSelectedEndpoint(endpoint);
-   setEditModelOpen(true);
-  }
+  const handleeditEndpoint = async (endpoint: Endpoint) => {
+    setSelectedEndpoint(endpoint);
+    setEditModelOpen(true);
+  };
 
   const handledeleteEndpoint = async (id: number) => {
     setSelectId(id);
@@ -156,25 +162,26 @@ const EndpointsTable = () => {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
+                            onClick={() => handleeditEndpoint(endpoint)}
+                            className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 
+hover:scale-125 dark:bg-yellow-400 dark:hover:bg-yellow-300 transition-all 
+duration-200 hover:shadow-md dark:hover:shadow-[0_0_8px_rgba(250,204,21,0.6)] 
+cursor-pointer"
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-neutral-800 text-white dark:bg-neutral-200 dark:text-black">
+                          Update
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
                             onClick={() => handledeleteEndpoint(endpoint.id)}
                             className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 hover:scale-125 dark:bg-red-400 dark:hover:bg-red-400 transition-all duration-200 dark:hover:shadow-[0_0_8px_rgba(248,113,113,0.6)] cursor-pointer"
                           />
                         </TooltipTrigger>
                         <TooltipContent className="bg-neutral-800 text-white dark:bg-neutral-200 dark:text-black">
                           Delete
-                        </TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => handleeditEndpoint(endpoint)}
-                            className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 hover:scale-125 dark:bg-yellow-400 dark:hover:bg-yellow-300 transition-all duration-200 hover:shadow-md dark:hover:shadow-[0_0_8px_rgba(250,204,21,0.6)] cursor-pointer"
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="bg-neutral-800 text-white dark:bg-neutral-200 dark:text-black"
-                        >
-                          Update
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -193,8 +200,12 @@ const EndpointsTable = () => {
             message="Do you want to delete the endpoint?"
           />
         )}
-        {editModelopen && selectedEndpoint &&(
-          <UpdateModal open={editModelopen} onOpenChange={setEditModelOpen} endpoint={selectedEndpoint} />
+        {editModelopen && selectedEndpoint && (
+          <UpdateModal
+            open={editModelopen}
+            onOpenChange={setEditModelOpen}
+            endpoint={selectedEndpoint}
+          />
         )}
       </div>
     </div>
