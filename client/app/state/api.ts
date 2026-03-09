@@ -45,8 +45,11 @@ export const api = createApi({
   reducerPath: "api",
   tagTypes: ["Endpoints"],
   endpoints: (build) => ({
-    getEndpoints: build.query<Endpoint[], void>({
-      query: () => "/endpoints",
+    getEndpoints: build.query<Endpoint[], string>({
+      query: (search) => ({
+       url:"/endpoints",
+       params:search?{search}:{}
+      }),
       transformResponse: (response: { data: Endpoint[]; meta: any }) =>
         response.data,
       providesTags: ["Endpoints"],

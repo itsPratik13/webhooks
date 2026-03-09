@@ -29,9 +29,11 @@ import ConfirmModal from "./ConfirmModal";
 import AddModal from "./AddModal";
 import { set } from "zod";
 import UpdateModal from "./UpdateModal";
+import { useAppSelector } from "../redux";
 
 const EndpointsTable = () => {
-  const { error, data, isLoading } = useGetEndpointsQuery();
+  const searchValue = useAppSelector((state) => state.global.search);
+  const { error, data, isLoading } = useGetEndpointsQuery(searchValue);
   const [deleteEndpoint] = useDeleteEndpointsMutation();
 
   const [deletemodalOpen, setDeleteModalOpen] = useState(false);
@@ -115,11 +117,11 @@ const EndpointsTable = () => {
 
       {openModal && <AddModal open={openModal} onOpenChange={setOpenModal} />}
 
-      <div className="max-w-full flex-1">
+      <div className="max-w-full flex-1 rounded-xl border bg-white dark:bg-neutral-950 shadow-sm overflow-hidden">
         <Table>
-          <TableCaption>A list of your endpoints.</TableCaption>
-          <TableHeader>
-            <TableRow>
+          <TableCaption className="text-neutral-500">A list of your endpoints.</TableCaption>
+          <TableHeader className="sticky top-0 z-10 rounded-xl bg-neutral-100 dark:bg-neutral-900 border-b">
+            <TableRow className="">
               <TableHead className="w-1/6 text-left">ID</TableHead>
               <TableHead className="w-1/6 text-left">Name</TableHead>
               <TableHead className="w-1/6 text-left">Endpoint URL</TableHead>
@@ -130,7 +132,7 @@ const EndpointsTable = () => {
           </TableHeader>
           <TableBody>
             {data?.map((endpoint) => (
-              <TableRow key={endpoint.id}>
+              <TableRow key={endpoint.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900">
                 <TableCell className="w-1/6 font-medium p-2">
                   {endpoint.id}
                 </TableCell>
