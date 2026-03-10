@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useGetWebHooksQuery } from "@/app/state/api";
 import {
@@ -12,9 +13,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Check, X } from "lucide-react";
+import { Check, Filter, X } from "lucide-react";
 import JsonView from "@microlink/react-json-view";
 
 export default function Page() {
@@ -36,11 +50,21 @@ export default function Page() {
     pollingInterval: 10000, // auto refresh every 10s
   });
 
-  const [search, setSearch] = React.useState("");
-  const [expandedRow, setExpandedRow] = React.useState<number | null>(null);
+  const [eventType, setEventType] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [signatureFilter, setSignatureFilter] = useState<
+    "valid" | "invalid" | "all"
+  >("all");
+
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
   const methodColors: Record<string, string> = {
     POST: "bg-green-200",
+    DELETE: "bg-red-200",
+    GET: "bg-blue-200",
+    PUT: "bg-yellow-200",
+    PATCH: "bg-purple-200",
   };
 
   const formatJSON = (value: unknown) => {
@@ -61,15 +85,23 @@ export default function Page() {
     }).format(new Date(date));
 
   const sortedFilteredData = React.useMemo(() => {
-    const filtered = data.filter((item: any) =>
-      Object.values(item).join(" ").toLowerCase().includes(search.toLowerCase())
-    );
+    return [...data]
+      .filter((item: any) => {
+        if (eventType && item.eventType !== eventType) return false;
+        if (signatureFilter === "valid" && item.signatureValid !== true)
+          return false;
+        if (startDate && new Date(item.receivedAt) < new Date(startDate))
+          return false;
+        if (endDate && new Date(item.receivedAt) > new Date(endDate))
+          return false;
 
-    return [...filtered].sort(
-      (a: any, b: any) =>
-        new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime()
-    );
-  }, [data, search]);
+        return true;
+      })
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.receivedAt).getTime() - new Date(a.receivedAt).getTime()
+      );
+  }, [data, eventType, signatureFilter, startDate, endDate]);
 
   const IsSignatureValid = ({
     valid,
@@ -127,12 +159,44 @@ export default function Page() {
         </div>
 
         <div className="flex gap-2">
-          <Input
+          {/* <Input
             placeholder="Search responses..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-64 ring-none focus:ring-1 focus:ring-neutral-200 focus:ring-offset-0 focus-visible:ring-1 focus-visible:ring-neutral-200 focus-visible:ring-offset-0 shadow-input"
-          />
+          /> */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="cursor-pointer" variant="outline">
+                <Filter fill="white" className="w-6 h-6" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              side="bottom"
+              className="w-64 p-3 space-y-3"
+            >
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-medium mb-1">Event Type</label>
+                <Input
+                  placeholder="e.g. push, payment_intent.succeeded"
+                  value={eventType}
+                  onChange={(e) => setEventType(e.target.value)}
+                  className="h-8 text-xs"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-medium mb-1">Event Type</label>
+                <Input
+                  placeholder="e.g. push, payment_intent.succeeded"
+                  value={eventType}
+                  onChange={(e) => setEventType(e.target.value)}
+                  className="h-8 text-xs"
+                />
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button
             variant="outline"
             onClick={() => refetch()}

@@ -37,14 +37,21 @@ const Navbar = () => {
         <div className="flex h-min w-80 relative">
          
           <input
-            className="w-full rounded-2xl p-2 bg-neutral-100 border border-neutral-300 dark:bg-transparent dark:border dark:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-300/50 dark:focus:ring-zinc-700 shadow-md focus:shadow-none dark:shadow-md dark:shadow-neutral-600 focus:dark:shadow-none "
+            className="w-full rounded-2xl p-2 bg-neutral-100 border border-neutral-300 
+            dark:bg-neutral-900 dark:border dark:border-neutral-500 
+            focus:outline-none focus:ring-2 focus:ring-neutral-300/50 dark:focus:ring-zinc-700 
+            focus:border-neutral-400 dark:focus:border-neutral-400 
+            shadow-md focus:shadow-none dark:shadow-md dark:shadow-neutral-600 focus:dark:shadow-none"
             type="text"
             placeholder="Search"
             value={search}
             onChange={(e)=>dispatch(setSearchValue(e.target.value))}
           />
           {search && (
-            <button onClick={()=>dispatch(setSearchValue("")) }className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-black dark:hover:text-white"><X/></button>
+            <button onClick={()=>dispatch(setSearchValue("")) }
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-neutral-500 
+            hover:text-black dark:hover:text-white  rounded-full cursor-pointer"
+            ><X/></button>
           )}
         </div>
       </div>

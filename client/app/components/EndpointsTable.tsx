@@ -118,8 +118,8 @@ const EndpointsTable = () => {
       {openModal && <AddModal open={openModal} onOpenChange={setOpenModal} />}
 
       <div className="max-w-full flex-1 rounded-xl border bg-white dark:bg-neutral-950 shadow-sm overflow-hidden">
-        <Table>
-          <TableCaption className="text-neutral-500">A list of your endpoints.</TableCaption>
+        <Table className="">
+          <TableCaption className="text-neutral-500 caption-bottom" >A list of your endpoints.</TableCaption>
           <TableHeader className="sticky top-0 z-10 rounded-xl bg-neutral-100 dark:bg-neutral-900 border-b">
             <TableRow className="">
               <TableHead className="w-1/6 text-left">ID</TableHead>

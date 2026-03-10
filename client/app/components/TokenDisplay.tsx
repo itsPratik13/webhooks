@@ -7,8 +7,8 @@ const TokenDisplay = ({ token }: { token: string }) => {
   const [visible, setVisible] = useState(false);
 
   return (
-    <div className="flex justify-between items-center gap-4">
-      <span className="tracking-tight">{visible ? `${apiUrl}/webhook/${token}` : "*******"}</span>
+    <div className="flex  items-center gap-4">
+      <span className=" truncate tracking-tight">{visible ? `${apiUrl}/webhook/${token}` : "*******"}</span>
       <div className="flex gap-2">
         <CopyButton
           text={`${apiUrl}/webhook/${token}`}
