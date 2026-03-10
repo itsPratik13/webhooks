@@ -30,6 +30,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Check, Filter, X } from "lucide-react";
 import JsonView from "@microlink/react-json-view";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Page() {
   const params = useParams();
@@ -65,6 +73,8 @@ export default function Page() {
     GET: "bg-blue-200",
     PUT: "bg-yellow-200",
     PATCH: "bg-purple-200",
+    HEAD: "bg-gray-200",
+    OPTIONS: "bg-orange-200",
   };
 
   const formatJSON = (value: unknown) => {
@@ -89,6 +99,8 @@ export default function Page() {
       .filter((item: any) => {
         if (eventType && item.eventType !== eventType) return false;
         if (signatureFilter === "valid" && item.signatureValid !== true)
+          return false;
+        if (signatureFilter === "invalid" && item.signatureValid !== false)
           return false;
         if (startDate && new Date(item.receivedAt) < new Date(startDate))
           return false;
@@ -182,18 +194,62 @@ export default function Page() {
                   placeholder="e.g. push, payment_intent.succeeded"
                   value={eventType}
                   onChange={(e) => setEventType(e.target.value)}
-                  className="h-8 text-xs"
+                  className="h-8 text-xs w-3/4"
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-medium mb-1">Event Type</label>
+                <label className="text-xs font-medium mb-1">
+                  Select Signature Type
+                </label>
+                <Select
+                  value={signatureFilter}
+                  onValueChange={(value) =>
+                    setSignatureFilter(value as "valid" | "invalid" | "all")
+                  }
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Signature" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="valid">Valid</SelectItem>
+                      <SelectItem value="invalid">Invalid</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-medium mb-1">Start Date</label>
                 <Input
-                  placeholder="e.g. push, payment_intent.succeeded"
-                  value={eventType}
-                  onChange={(e) => setEventType(e.target.value)}
-                  className="h-8 text-xs"
+                  placeholder="YYYY-MM-DD"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="h-8 text-xs w-3/4"
                 />
               </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-medium mb-1">End Date</label>
+                <Input
+                  placeholder="YYYY-MM-DD"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="h-8 text-xs w-3/4"
+                />
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-xs mt-1 cursor-pointer w-[100px]"
+                onClick={() => {
+                  setEventType("");
+                  setSignatureFilter("all");
+                  setStartDate("");
+                  setEndDate("");
+                }}
+              >
+                Clear Filters
+              </Button>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -201,7 +257,7 @@ export default function Page() {
             variant="outline"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="cursor-pointer"
+            className="cursor-pointer w-[100px]"
           >
             {isFetching ? "Refreshing..." : "Refresh"}
           </Button>
