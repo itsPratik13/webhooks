@@ -278,7 +278,7 @@ export default function Page() {
                 <TableHead>Received</TableHead>
                 <TableHead>Event Type</TableHead>
                 <TableHead>Signature</TableHead>
-                <TableHead className="text-right">Details</TableHead>
+                <TableHead className="text-right mr-2">Details</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -308,11 +308,11 @@ export default function Page() {
                     </TableCell>
 
                     <TableCell className="text-right">
-                      <div className="">
+                      <div className="flex justify-end items-center gap-2">
                         <Button
                           size="sm"
-                          className="cursor-pointer"
-                          variant="ghost"
+                          className="cursor-pointer w-[50px]"
+                          variant="outline"
                           onClick={() =>
                             setExpandedRow(
                               expandedRow === response.id ? null : response.id
@@ -320,6 +320,18 @@ export default function Page() {
                           }
                         >
                           {expandedRow === response.id ? "Hide" : "View"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="cursor-pointer w-[50px]"
+                          variant="outline"
+                          onClick={() =>
+                            setReplayRow(
+                              replayRow === response.id ? null : response.id
+                            )
+                          }
+                        >
+                          Replay
                         </Button>
                       </div>
                     </TableCell>
@@ -364,6 +376,37 @@ export default function Page() {
                               />
                             </div>
                           </div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {/*Replay Row */}
+                  {replayRow === response.id && (
+                    <TableRow>
+                      <TableCell colSpan={7} className="bg-muted/30 p-4">
+                        <div className="w-full flex flex-col items-center gap-3">
+                          <h3 className="text-sm font-medium text-center">
+                            Replay Webhook
+                          </h3>
+
+                          <div className="w-full max-w-md flex items-center gap-2">
+                            <Input
+                              placeholder="Your server url or https://localhost:3000/"
+                              value={replayUrl}
+                              onChange={(e) => setReplayUrl(e.target.value)}
+                              className="flex-1"
+                            />
+
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="cursor-pointer shrink-0"
+                              onClick={() => {}}
+                            >
+                              Send
+                            </Button>
+                          </div>
+                          
                         </div>
                       </TableCell>
                     </TableRow>
