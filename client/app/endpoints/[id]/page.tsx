@@ -3,7 +3,7 @@
 import React from "react";
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { useGetWebHooksQuery } from "@/app/state/api";
+import { ReplayResponse, useGetWebHooksQuery } from "@/app/state/api";
 import {
   Table,
   TableBody,
@@ -66,6 +66,11 @@ export default function Page() {
   >("all");
 
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [replayRow, setReplayRow] = useState<number | null>(null);
+  const [replayUrl, setReplayUrl] = useState("");
+  const [replayResponse, setReplayResponse] = useState<ReplayResponse | null>(
+    null
+  );
 
   const methodColors: Record<string, string> = {
     POST: "bg-green-200",
@@ -75,17 +80,6 @@ export default function Page() {
     PATCH: "bg-purple-200",
     HEAD: "bg-gray-200",
     OPTIONS: "bg-orange-200",
-  };
-
-  const formatJSON = (value: unknown) => {
-    try {
-      if (typeof value === "string") {
-        return JSON.stringify(JSON.parse(value), null, 2);
-      }
-      return JSON.stringify(value, null, 2);
-    } catch {
-      return String(value);
-    }
   };
 
   const formatDate = (date: string) =>
@@ -314,18 +308,20 @@ export default function Page() {
                     </TableCell>
 
                     <TableCell className="text-right">
-                      <Button
-                        size="sm"
-                        className="cursor-pointer"
-                        variant="ghost"
-                        onClick={() =>
-                          setExpandedRow(
-                            expandedRow === response.id ? null : response.id
-                          )
-                        }
-                      >
-                        {expandedRow === response.id ? "Hide" : "View"}
-                      </Button>
+                      <div className="">
+                        <Button
+                          size="sm"
+                          className="cursor-pointer"
+                          variant="ghost"
+                          onClick={() =>
+                            setExpandedRow(
+                              expandedRow === response.id ? null : response.id
+                            )
+                          }
+                        >
+                          {expandedRow === response.id ? "Hide" : "View"}
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
 

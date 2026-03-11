@@ -6,7 +6,7 @@ export interface Endpoint {
   token: string;
   provider: "stripe" | "github" | "razorpay";
   createdAt: string;
-  signingSecret?:string|null
+  signingSecret?: string | null;
 }
 interface WebHookResponse {
   id: number;
@@ -21,6 +21,18 @@ interface WebHookResponse {
   statusCode?: number;
   processingTime?: number; // in ms
   signatureValid?: boolean;
+}
+export interface ReplayResponse {
+  message: string;
+  status?: number;
+  body?: string;
+  error?: string;
+}
+export interface ReplayRequest {
+  responseId: number;
+  replayUrl: string;
+  headers?: Record<string, string>;
+  body?: string;
 }
 
 export const api = createApi({
@@ -47,8 +59,8 @@ export const api = createApi({
   endpoints: (build) => ({
     getEndpoints: build.query<Endpoint[], string>({
       query: (search) => ({
-       url:"/endpoints",
-       params:search?{search}:{}
+        url: "/endpoints",
+        params: search ? { search } : {},
       }),
       transformResponse: (response: { data: Endpoint[]; meta: any }) =>
         response.data,
@@ -66,7 +78,12 @@ export const api = createApi({
     }),
     addEndpoints: build.mutation<
       Endpoint,
-      { name: string; provider: "stripe" | "github" | "razorpay" ,signingSecret?:string}>({
+      {
+        name: string;
+        provider: "stripe" | "github" | "razorpay";
+        signingSecret?: string;
+      }
+    >({
       query: (body) => ({
         url: "/endpoints",
         method: "POST",
@@ -82,13 +99,23 @@ export const api = createApi({
       }),
       providesTags: ["Endpoints"],
     }),
-    updateEndpoints:build.mutation<Endpoint,{id:number,signingSecret:string|null}>({
-      query:({id,...body})=>({
-        url:`/endpoints/${id}`,
-        method:"PATCH",
-        body
+    updateEndpoints: build.mutation<
+      Endpoint,
+      { id: number; signingSecret: string | null }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `/endpoints/${id}`,
+        method: "PATCH",
+        body,
       }),
-      invalidatesTags:["Endpoints"]
+      invalidatesTags: ["Endpoints"],
+    }),
+    replayWebhooks:build.mutation<ReplayResponse,ReplayRequest>({
+      query:({responseId,...body})=>({
+        url:`/replay/${responseId}`,
+        method:"POST",
+        body
+      })
     })
   }),
 });
@@ -99,4 +126,5 @@ export const {
   useAddEndpointsMutation,
   useGetWebHooksQuery,
   useUpdateEndpointsMutation,
+  useReplayWebhooksMutation
 } = api;
