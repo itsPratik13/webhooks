@@ -3,7 +3,11 @@
 import React from "react";
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { ReplayResponse, useGetWebHooksQuery } from "@/app/state/api";
+import {
+  ReplayResponse,
+  useGetWebHooksQuery,
+  useReplayWebhooksMutation,
+} from "@/app/state/api";
 import {
   Table,
   TableBody,
@@ -38,8 +42,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { useTheme } from "next-themes";
 
 export default function Page() {
+  const { resolvedTheme } = useTheme();
   const params = useParams();
 
   const endpointId = React.useMemo(() => {
@@ -58,6 +65,8 @@ export default function Page() {
     pollingInterval: 10000, // auto refresh every 10s
   });
 
+  const [replayWebHook, { isLoading: isReplaying }] =
+    useReplayWebhooksMutation();
   const [eventType, setEventType] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -71,6 +80,8 @@ export default function Page() {
   const [replayResponse, setReplayResponse] = useState<ReplayResponse | null>(
     null
   );
+  const [editedHeaders, setEditedHeaders] = useState<string>("");
+  const [editedBody, setEditedBody] = useState<string>("");
 
   const methodColors: Record<string, string> = {
     POST: "bg-green-200",
@@ -353,6 +364,11 @@ export default function Page() {
                               src={parseJSON(response.headers)}
                               collapsed={1}
                               displayDataTypes={false}
+                              theme={
+                                resolvedTheme === "dark"
+                                  ? "monokai"
+                                  : "rjv-default"
+                              }
                             />
                           </div>
 
@@ -373,6 +389,11 @@ export default function Page() {
                                 collapsed={2}
                                 displayDataTypes={false}
                                 enableClipboard={false}
+                                theme={
+                                  resolvedTheme === "dark"
+                                    ? "monokai"
+                                    : "rjv-default"
+                                }
                               />
                             </div>
                           </div>
@@ -401,12 +422,87 @@ export default function Page() {
                               size="sm"
                               variant="outline"
                               className="cursor-pointer shrink-0"
-                              onClick={() => {}}
+                              onClick={async () => {
+                                try {
+                                  const result = await replayWebHook({
+                                    responseId: response.id,
+                                    replayUrl,
+                                    headers: editedHeaders
+                                      ? JSON.parse(editedHeaders)
+                                      : undefined,
+                                    body: editedBody || undefined,
+                                  }).unwrap();
+                                  setReplayResponse(result);
+                                } catch (error) {
+                                  console.error("Replay failed", error);
+                                }
+                              }}
                             >
                               Send
                             </Button>
                           </div>
-                          
+                          <div className="grid grid-cols-2 gap-6 w-full h-70">
+                            <div className="border border-neutral-200 w-full h-full rounded-2xl p-4 flex flex-col gap-3">
+                              <h3 className="text-center text-lg font-semibold">
+                                Headers
+                              </h3>
+
+                              <textarea
+                                className="w-full h-full p-3 text-xs font-mono border rounded-md 
+                                          bg-background resize-none focus:outline-none focus:ring-1 
+                                        focus:ring-neutral-300 dark:focus:ring-neutral-600"
+                                defaultValue={JSON.stringify(
+                                  parseJSON(response.headers),
+                                  null,
+                                  2
+                                )}
+                                onChange={(e) =>
+                                  setEditedHeaders(e.target.value)
+                                }
+                              />
+                            </div>
+                            <div className="border border-neutral-200 w-full h-full rounded-2xl p-4 flex flex-col gap-3">
+                              <h3 className="text-center text-lg font-semibold">
+                                Body
+                              </h3>
+                              <textarea
+                                className="w-full h-full p-3 text-xs font-mono border rounded-md 
+                                          bg-background resize-none focus:outline-none focus:ring-1 
+                                         focus:ring-neutral-300 dark:focus:ring-neutral-600"
+                                value={JSON.stringify(
+                                  parseJSON(response.body),
+                                  null,
+                                  2
+                                )}
+                                onChange={(e) => setEditedBody(e.target.value)}
+                              />
+                            </div>
+                          </div>
+                          {replayResponse && (
+                            <div className="w-full border rounded-md p-3 text-xs space-y-2 mt-2">
+                              <span className="font-medium">Status: </span>
+                              <span
+                                className={`px-2 py-0.5 rounded font-medium ${
+                                  replayResponse.status &&
+                                  replayResponse.status < 300
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-red-100 text-red-700"
+                                }`}
+                              >
+                                {replayResponse.status ?? "Error"}
+                              </span>
+                              {replayResponse.error && (
+                                <p className="text-red-500">
+                                  {replayResponse.error}
+                                </p>
+                              )}
+                              {replayResponse.body && (
+                                <pre className="bg-muted p-2 rounded overflow-auto max-h-32 whitespace-pre-wrap">
+                                  {replayResponse.body}
+                                </pre>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
