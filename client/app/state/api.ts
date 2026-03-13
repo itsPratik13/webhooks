@@ -112,7 +112,7 @@ export const api = createApi({
     }),
     replayWebhooks:build.mutation<ReplayResponse,ReplayRequest>({
       query:({responseId,...body})=>({
-        url:`/endpoints/${responseId}/reply`,
+        url:`/endpoints/${responseId}/replay`,
         method:"POST",
         body
       })
