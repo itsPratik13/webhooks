@@ -8,6 +8,8 @@ import { clerkMiddleware, requireAuth } from "@clerk/express";
 import endPointRoutes from "./routes/endpointRoutes.js";
 import webHookRoutes from "./routes/webhookRoutes.js";
 import { UserExists } from "./middleware/checkUserExists.js";
+import {endpointLimiter, webhookLimiter} from "./rate-limiting/rateLimiter.js"
+import "./cron/retentionCron.js"
 
 dotenv.config();
 const app = express();
@@ -30,12 +32,13 @@ app.use((req, res, next) => {
 
 app.use(
   "/endpoints",
+  endpointLimiter,
   express.json(),
   requireAuth(),
   UserExists,
   endPointRoutes
 );
-app.use("/webhook", webHookRoutes);
+app.use("/webhook",webhookLimiter, webHookRoutes);
 
 app.get("/health", (req, res) => {
   res.send("Hello World!");

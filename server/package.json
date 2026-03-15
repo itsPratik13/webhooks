@@ -19,6 +19,8 @@
     "@types/helmet": "^0.0.48",
     "@types/morgan": "^1.9.10",
     "@types/node": "^25.2.3",
+    "@types/node-cron": "^3.0.11",
+    "node-cron": "^4.2.1",
     "nodemon": "^3.1.11",
     "prisma": "^6.19.2",
     "tsx": "^4.21.0",
@@ -30,6 +32,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
     "helmet": "^8.1.0",
     "morgan": "^1.10.1"
   }
